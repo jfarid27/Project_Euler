@@ -1,22 +1,32 @@
 module FindSubStr
 ( prodSubStr
+, prodSubStrRec
+, productify
+, takeHead
 ) where
 
-prodSubStr :: Int -> Int -> Int
+prodSubStr :: Int -> String -> String
 prodSubStr digits x = prodSubStrRec digits x 0
 
-prodSubStrRec :: Int -> Int -> Int -> Int
+productify :: Int -> Int
+productify xs = foldl (\acc next -> acc * next) 1
+    (map (\x -> (read [x] :: Int)) (show xs) )
+
+takeHead :: Int -> String -> Int
+takeHead digits xs = read (take digits (xs))
+
+prodSubStrRec :: Int -> String -> Int -> String
 prodSubStrRec digits numStr currentMax =
-    let stringOfNum = (show numStr)
-        stringLengthEqualsDigits = (length stringOfNum) == digits
-        firstDigits = read (take digits (stringOfNum)) :: Int
-        firstDigitProduct = foldl (\acc next -> acc * next) 1
-            (map (\x -> (read [x] :: Int)) (take digits (stringOfNum :: [Char])))
+    let stringOfNum = numStr
+        stringLengthEqualsDigits = (length stringOfNum) == digits :: Bool
+        firstDigits = takeHead digits stringOfNum :: Int
+        firstDigitProduct =  productify (takeHead digits stringOfNum) :: Int
+        currentMaxProduct = productify currentMax
     in
         if (stringLengthEqualsDigits)
-        then if (firstDigitProduct > currentMax)
+        then if (firstDigitProduct > currentMaxProduct)
             then numStr
-            else currentMax
-        else if (firstDigitProduct > currentMax)
-            then (prodSubStrRec digits (read (tail stringOfNum) :: Int) firstDigits)
-            else (prodSubStrRec digits (read (tail stringOfNum) :: Int) currentMax)
+            else show currentMax
+        else if (firstDigitProduct > currentMaxProduct)
+            then (prodSubStrRec digits (tail stringOfNum) firstDigits)
+            else (prodSubStrRec digits (tail stringOfNum) currentMax)
