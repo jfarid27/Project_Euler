@@ -45,11 +45,11 @@ generateBlock :: Size -> IndexedGrid -> Int -> Direction -> Block
 generateBlock size grid index direction = map (\i -> safeGet i grid) indexes
     where indexes = blockIndexes size index direction
 
-generateBlocks :: Size -> IndexedGrid -> Int -> Blocks
-generateBlocks n grid i = M.foldlWithKey (\acc key val -> 
+generateBlocks :: Size -> IndexedGrid -> Blocks
+generateBlocks n grid = M.foldlWithKey (\acc key val -> 
     let newblocks = map (\direction -> generateBlock n grid key direction) directions in
         concat [acc, newblocks]) [] grid 
     where directions = [Grider.Up , Grider.UpLeft , Grider.Left , Grider.DownLeft , Grider.Down , Grider.UpRight , Grider.Right , Grider.DownRight]
 
 getBlocks :: Grid -> Size -> IO Blocks 
-getBlocks grid size = return $ generateBlocks size (mapGrid grid) size
+getBlocks grid size = return $ generateBlocks size (mapGrid grid)
